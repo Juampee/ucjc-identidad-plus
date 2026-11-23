@@ -1,6 +1,6 @@
 {
   "name": "ucjc-identidad-plus",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "description": "Pieza Identidad de Tienda UCJC: acceso con Google o correo, foto de perfil, último método usado, seguridad y actividad.",

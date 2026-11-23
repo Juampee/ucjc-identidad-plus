@@ -8,7 +8,7 @@ describe('<ucjc-identidad>', () => {
   beforeEach(() => { store._borrarTodo(); document.body.innerHTML = ''; });
 
   it('exporta nombre y versión y registra el custom element', () => {
-    expect(meta).toEqual({ nombre: 'identidad', version: '0.3.0' });
+    expect(meta).toEqual({ nombre: 'identidad', version: '0.3.1' });
     expect(customElements.get('ucjc-identidad')).toBeTruthy();
   });
 
@@ -40,8 +40,9 @@ describe('<ucjc-identidad>', () => {
     expect(el.shadowRoot.textContent).toContain('Hola de nuevo, Gina');
   });
 
-  it('el botón de inicio rápido solo aparece con el atributo y entra en la cuenta de pruebas', async () => {
+  it('el inicio rápido sale por defecto, se oculta con sin-inicio-rapido y entra en la cuenta de pruebas', async () => {
     const sin = document.createElement('ucjc-identidad');
+    sin.setAttribute('sin-inicio-rapido', '');
     document.body.appendChild(sin);
     expect(sin.shadowRoot.querySelector('[data-a="rapido"]')).toBeNull();
     sin.remove();
@@ -49,7 +50,6 @@ describe('<ucjc-identidad>', () => {
     const eventos = [];
     window.addEventListener(EVENTO, (e) => eventos.push(e.detail));
     const el = document.createElement('ucjc-identidad');
-    el.setAttribute('inicio-rapido', '');
     document.body.appendChild(el);
     el.shadowRoot.querySelector('[data-a="rapido"]').click();
     await vi.waitFor(() => expect(eventos.some((d) => d.autenticado)).toBe(true));

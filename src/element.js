@@ -37,7 +37,7 @@ export class UcjcIdentidad extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['google-client-id', 'inicio-rapido'];
+    return ['google-client-id', 'sin-inicio-rapido'];
   }
 
   connectedCallback() {
@@ -59,9 +59,9 @@ export class UcjcIdentidad extends HTMLElement {
     if (this.isConnected && !this.usuario) this.render();
   }
 
-  /** Atributo opcional `inicio-rapido`: muestra el botón de acceso a la cuenta de pruebas. */
+  /** El botón de inicio rápido (cuenta de pruebas) sale por defecto; `sin-inicio-rapido` lo oculta. */
   get inicioRapido() {
-    return this.hasAttribute('inicio-rapido');
+    return !this.hasAttribute('sin-inicio-rapido');
   }
 
   get clientId() {

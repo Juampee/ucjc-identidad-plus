@@ -2,7 +2,7 @@
 
 Propuesta de pieza **Identidad** para la tienda de micro-frontends: acceso con Google o con correo, foto de perfil, aviso de **último método usado**, seguridad y registro de actividad.
 
-**Responsable:** Juan Pedro Faba Prados · **Custom element:** `<ucjc-identidad>` · **Versión:** 0.3.0
+**Responsable:** Juan Pedro Faba Prados · **Custom element:** `<ucjc-identidad>` · **Versión:** 0.3.1
 
 ## Qué incluye
 
@@ -32,16 +32,16 @@ Sin sesión: `{ "autenticado": false, "usuario": null, "momento": "…" }`. Se e
 <script type="module" src="https://<usuario>.github.io/<repo>/vX.Y.Z/remote.js"></script>
 ```
 
-El módulo exporta `{ nombre: 'identidad', version: '0.3.0' }`.
+El módulo exporta `{ nombre: 'identidad', version: '0.3.1' }`.
 
 ### Inicio rápido para pruebas
 
-Con el atributo opcional `inicio-rapido` aparece un botón que entra directamente en una cuenta solo para pruebas
-(`IDENTIDADBMEJORQUEIDENTIDADA`, `identidadb@pruebas.ucjc.edu`), creada sola en el navegador. La demo (`index.html`) lo trae activado;
-el shell no lo usa. Para probarlo allí, añade el atributo al elemento o entra con ese correo y la contraseña `IdentidadB-Pruebas1!`.
+Desde la v0.3.1 la pantalla de acceso muestra un botón **Inicio rápido** que entra directamente en una cuenta solo para pruebas
+(`IDENTIDADBMEJORQUEIDENTIDADA`, `identidadb@pruebas.ucjc.edu`, contraseña `IdentidadB-Pruebas1!`), creada sola en el navegador.
+Sale también dentro de la tienda. Para ocultarlo:
 
 ```html
-<ucjc-identidad inicio-rapido></ucjc-identidad>
+<ucjc-identidad sin-inicio-rapido></ucjc-identidad>
 ```
 
 ### Activar Google de verdad
