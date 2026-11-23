@@ -1,17 +1,17 @@
+# Publica la demo en la RAÍZ de la rama gh-pages (sin borrar las carpetas vX.Y.Z/ de las releases).
+# GitHub Pages sirve la rama gh-pages: así funcionan a la vez la demo y https://juampee.github.io/ucjc-identidad-plus/vX.Y.Z/remote.js
 name: pages
 on:
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: gh-pages
+  cancel-in-progress: false
 jobs:
-  build:
+  demo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,16 +21,17 @@ jobs:
       - run: npm install
       - run: npm test
       - run: npx vite build --config vite.demo.config.js
-      - run: touch dist-demo/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist-demo
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Copiar la demo a gh-pages
+        run: |
+          git fetch origin gh-pages
+          git worktree add /tmp/pages origin/gh-pages
+          cd /tmp/pages && git checkout -B gh-pages && cd -
+          rm -rf /tmp/pages/assets /tmp/pages/index.html
+          cp -r dist-demo/. /tmp/pages/
+          touch /tmp/pages/.nojekyll
+          cd /tmp/pages
+          git config user.name "release-bot"
+          git config user.email "release-bot@users.noreply.github.com"
+          git add -A
+          git commit -m "Demo en gh-pages" || exit 0
+          git push origin gh-pages
