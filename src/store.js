@@ -190,7 +190,35 @@ function abrirSesion(u, metodo, recordar) {
   });
 }
 
+/** Cuenta solo para pruebas (demo / inicio rápido). Vive únicamente en el navegador. */
+export const CUENTA_PRUEBAS = Object.freeze({
+  nombre: 'IDENTIDADBMEJORQUEIDENTIDADA',
+  email: 'identidadb@pruebas.ucjc.edu',
+  password: 'IdentidadB-Pruebas1!',
+});
+
 export const store = {
+  /** Inicio rápido: crea la cuenta de pruebas si no existe y abre sesión sin pedir datos. */
+  async iniciarRapido(recordar = true) {
+    const email = CUENTA_PRUEBAS.email;
+    const todos = usuarios();
+    let u = todos[email];
+    if (!u || !u.hash) {
+      const { salt, hash } = await hashPassword(CUENTA_PRUEBAS.password);
+      u = {
+        id: u ? u.id : idNuevo(), email, nombre: CUENTA_PRUEBAS.nombre, foto: u ? u.foto || null : null,
+        metodos: ['password'], salt, hash, creado: u ? u.creado : new Date().toISOString(),
+        actividad: u ? u.actividad || [] : [], cuentaPruebas: true,
+      };
+      if (!u.actividad.length) registrarActividad(u, 'registro', 'password');
+    }
+    limpiarIntentos(email);
+    registrarActividad(u, 'inicio de sesión', 'password');
+    guardarUsuarios({ ...todos, [email]: u });
+    abrirSesion(u, 'password', recordar);
+    return publico(u);
+  },
+
   async registrar({ nombre, email, password, recordar = true }) {
     nombre = String(nombre || '').trim();
     email = normalizarEmail(email);

@@ -1,5 +1,5 @@
 import { CSS } from './styles.js';
-import { store, fortaleza, emailValido } from './store.js';
+import { store, fortaleza, emailValido, CUENTA_PRUEBAS } from './store.js';
 import { fotoUsuario, avatarGenerado, procesarFoto } from './avatar.js';
 import { cargarGoogle, perfilDesdeCredencial } from './google.js';
 
@@ -37,7 +37,7 @@ export class UcjcIdentidad extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['google-client-id'];
+    return ['google-client-id', 'inicio-rapido'];
   }
 
   connectedCallback() {
@@ -57,6 +57,11 @@ export class UcjcIdentidad extends HTMLElement {
 
   attributeChangedCallback() {
     if (this.isConnected && !this.usuario) this.render();
+  }
+
+  /** Atributo opcional `inicio-rapido`: muestra el botón de acceso a la cuenta de pruebas. */
+  get inicioRapido() {
+    return this.hasAttribute('inicio-rapido');
   }
 
   get clientId() {
@@ -127,8 +132,14 @@ export class UcjcIdentidad extends HTMLElement {
     const botonGoogle = this.clientId
       ? `<div class="google" style="display:flex;justify-content:center;min-height:44px"><div id="gbtn"></div></div>${marcaGoogle ? `<p class="ayuda" style="text-align:center">${marcaGoogle} Usaste Google la última vez</p>` : ''}`
       : `<button type="button" class="boton secundario google" data-a="google">${ICONO_GOOGLE}<span>${esRegistro ? 'Registrarse' : 'Continuar'} con Google</span>${marcaGoogle}</button>`;
+    const rapido = this.inicioRapido && !esRegistro
+      ? `<div class="demo"><b>Inicio rápido (solo pruebas)</b>
+          <button type="button" class="boton primario" data-a="rapido" style="margin-top:.5rem">Inicio rápido · ${esc(CUENTA_PRUEBAS.nombre)}</button>
+          <p class="ayuda">Entra directamente con una cuenta de prueba (<code>${esc(CUENTA_PRUEBAS.email)}</code>). Se crea sola en este navegador.</p></div>`
+      : '';
     return `
       ${bienvenida}
+      ${rapido}
       <div class="pestanas" role="tablist">
         <button class="pestana" role="tab" type="button" data-vista="login" aria-selected="${!esRegistro}">Iniciar sesión</button>
         <button class="pestana" role="tab" type="button" data-vista="registro" aria-selected="${esRegistro}">Registrarse</button>
@@ -256,6 +267,15 @@ export class UcjcIdentidad extends HTMLElement {
         campo.type = oculto ? 'text' : 'password';
         b.textContent = oculto ? 'Ocultar' : 'Mostrar';
         b.setAttribute('aria-pressed', String(oculto));
+      },
+      rapido: async (b) => {
+        b.disabled = true;
+        try {
+          this._entrar(await store.iniciarRapido(true));
+        } catch (e) {
+          b.disabled = false;
+          this._mensaje(e.message);
+        }
       },
       olvidar: () => { store.olvidarUltimo(); this.render(); },
       google: () => { this.demoGoogle = true; this.render(); const i = this.$('#gnombre'); if (i) i.focus(); },

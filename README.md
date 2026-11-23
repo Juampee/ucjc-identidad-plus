@@ -34,6 +34,16 @@ Sin sesión: `{ "autenticado": false, "usuario": null, "momento": "…" }`. Se e
 
 El módulo exporta `{ nombre: 'identidad', version: '0.3.0' }`.
 
+### Inicio rápido para pruebas
+
+Con el atributo opcional `inicio-rapido` aparece un botón que entra directamente en una cuenta solo para pruebas
+(`IDENTIDADBMEJORQUEIDENTIDADA`, `identidadb@pruebas.ucjc.edu`), creada sola en el navegador. La demo (`index.html`) lo trae activado;
+el shell no lo usa. Para probarlo allí, añade el atributo al elemento o entra con ese correo y la contraseña `IdentidadB-Pruebas1!`.
+
+```html
+<ucjc-identidad inicio-rapido></ucjc-identidad>
+```
+
 ### Activar Google de verdad
 
 1. En Google Cloud Console crea un ID de cliente OAuth "Aplicación web".

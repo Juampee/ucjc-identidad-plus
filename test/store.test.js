@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { store, fortaleza, emailValido } from '../src/store.js';
+import { CUENTA_PRUEBAS, store, fortaleza, emailValido } from '../src/store.js';
 
 beforeEach(() => store._borrarTodo());
 
@@ -49,5 +49,17 @@ describe('store', () => {
     expect(emailValido('nope')).toBe(false);
     expect(fortaleza('Abcdef12!xyz').puntos).toBe(4);
     expect(fortaleza('password').puntos).toBe(0);
+  });
+
+  it('inicio rápido crea y reutiliza la cuenta de pruebas', async () => {
+    const u = await store.iniciarRapido();
+    expect(u.nombre).toBe('IDENTIDADBMEJORQUEIDENTIDADA');
+    expect(store.sesionActual().id).toBe(u.id);
+    store.cerrar();
+    const otra = await store.iniciarRapido();
+    expect(otra.id).toBe(u.id);
+    store.cerrar();
+    const manual = await store.iniciar({ email: CUENTA_PRUEBAS.email, password: CUENTA_PRUEBAS.password });
+    expect(manual.id).toBe(u.id);
   });
 });

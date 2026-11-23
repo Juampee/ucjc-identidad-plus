@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import meta from '../src/main.js';
 import { store } from '../src/store.js';
 
@@ -38,5 +38,23 @@ describe('<ucjc-identidad>', () => {
     document.body.appendChild(el);
     expect(el.shadowRoot.textContent).toContain('Último usado');
     expect(el.shadowRoot.textContent).toContain('Hola de nuevo, Gina');
+  });
+
+  it('el botón de inicio rápido solo aparece con el atributo y entra en la cuenta de pruebas', async () => {
+    const sin = document.createElement('ucjc-identidad');
+    document.body.appendChild(sin);
+    expect(sin.shadowRoot.querySelector('[data-a="rapido"]')).toBeNull();
+    sin.remove();
+
+    const eventos = [];
+    window.addEventListener(EVENTO, (e) => eventos.push(e.detail));
+    const el = document.createElement('ucjc-identidad');
+    el.setAttribute('inicio-rapido', '');
+    document.body.appendChild(el);
+    el.shadowRoot.querySelector('[data-a="rapido"]').click();
+    await vi.waitFor(() => expect(eventos.some((d) => d.autenticado)).toBe(true));
+    const d = eventos.find((x) => x.autenticado);
+    expect(d.usuario.nombre).toBe('IDENTIDADBMEJORQUEIDENTIDADA');
+    expect(Object.keys(d.usuario).sort()).toEqual(['email', 'id', 'nombre']);
   });
 });
